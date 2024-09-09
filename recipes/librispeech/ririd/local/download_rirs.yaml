@@ -1,0 +1,50 @@
+#!/bin/env inex
+
+db_root: db
+data_root: data
+db_root_url: http://www.openslr.org/resources/28
+db_part_name: rirs_noises
+db_part_md5: e6f48e257286e05de56413b4779d8ffb
+logs_dir: logs/01_prepare_rirs
+
+plugins:
+  - download
+  - unpack
+
+download:
+  module: inex.helpers/execute
+  options:
+    executable: wget
+    arguments:
+      - -nv
+      - -c
+      - -O
+      - ${db_root}/${db_part_name}.zip
+      - --no-check-certificate
+      - ${db_root_url}/${db_part_name}.zip
+    title: 'Downloading ${db_part_name} from openslr.org'
+    make_dirs: ${db_root}
+    log_file: ${logs_dir}/download_${db_part_name}.log.gz
+    done_mark: ${logs_dir}/download_${db_part_name}.done
+    disable: false
+    silent: false
+
+unpack:
+  module: inex.helpers/execute
+  options:
+    executable: unzip
+    arguments:
+      - -q
+      - -x
+      - ${db_root}/${db_part_name}.zip
+      - -d
+      - ${data_root}
+    title: 'Unpacking ${db_part_name} to ${data_root}'
+    check_md5:
+      path: ${db_root}/${db_part_name}.zip
+      md5: ${db_part_md5}
+    make_dirs: ${data_root}
+    log_file: ${logs_dir}/unpack_${db_part_name}.log.gz
+    done_mark: ${logs_dir}/unpack_${db_part_name}.done
+    disable: false
+    silent: false

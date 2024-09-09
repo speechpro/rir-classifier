@@ -1,0 +1,149 @@
+#!/bin/env inex
+
+params: ${__fetch__:local/parameters.yaml}
+
+vad_align: ${params.align.valid_vad}
+wav_scp: ${params.paths.valid_scp}
+utt2dur: ${params.paths.valid_dur}
+data_dir: ${params.paths.valid_data_dir}
+num_repeats: ${params.feats.valid_repeats}
+
+__mute__: [__all__]
+
+plugins:
+  - set_random_seed
+  - initialize_torch
+  - device
+  - classes
+  - rir_set
+  - noise_set
+  - align_set
+  - wave_set
+  - data_loader
+  - reverberate
+  - normalize
+  - compute_feats
+  - chunker
+  - make_chunks
+
+set_random_seed:
+  module: rirtk.utils.init_torch/set_random_seed
+  options:
+    seed: ${params.init.random_seed}
+
+initialize_torch:
+  module: rirtk.utils.init_torch/init_cudnn
+  options:
+    cudnn_enabled: ${params.init.cudnn_enabled}
+    cudnn_benchmark: ${params.init.cudnn_benchmark}
+    cudnn_deterministic: ${params.init.cudnn_deterministic}
+
+device:
+  module: torch/device
+  options: { device: cuda }
+
+classes:
+  module: rirtk.data.classes/Classes
+  options:
+    classes: ${params.paths.classes}
+    utid_regexp: ${params.chunk.ririd_from_utid}
+
+rir_set:
+  module: rirtk.utils.input_output/MemDataSet
+  options:
+    pathname: ${params.paths.rir_scp}
+
+noise_set:
+  module: rirtk.utils.input_output/MemDataSet
+  options:
+    pathname: ${params.paths.musan_scp}
+
+align_set:
+  module: rirtk.utils.input_output/read_vectors_from_text_ark
+  options:
+    pathnames: ${vad_align}
+
+wave_set:
+  module: rirtk.utils.input_output/AudioSet
+  options:
+    wav_scp: ${wav_scp}
+    utt2dur: ${utt2dur}
+    num_loops: true
+
+data_loader:
+  module: torch.utils.data.dataloader/DataLoader
+  imports:
+    dataset: plugins.wave_set
+    collate_fn: plugins.wave_set
+  options:
+    batch_size: ${params.feats.batch_size}
+    num_workers: ${params.feats.num_workers}
+    drop_last: false
+
+reverberate:
+  module: rirtk.utils.reverberate/reverberate
+  imports:
+    device: plugins.device
+    rir_set: plugins.rir_set
+    noise_set: plugins.noise_set
+    align_set: plugins.align_set
+    wave_set: plugins.data_loader
+  options:
+    frequency: ${params.fbank.frequency}
+    frame_len: ${params.fbank.frame_len}
+    frame_step: ${params.fbank.frame_step}
+    tolerance: ${params.feats.tolerance}
+    snr_range: ${params.feats.snr_range}
+    align_from_utid: ${params.feats.align_from_utid}
+    room_from_ririd: ${params.feats.room_from_ririd}
+    num_repeats: ${num_repeats}
+    batch_size: ${params.feats.batch_size}
+
+normalize:
+  module: rirtk.utils.norm_volume/set_max_level
+  imports:
+    wave_set: plugins.reverberate
+  options:
+    max_level: ${params.feats.max_level}
+
+compute_feats:
+  module: rirtk.utils.compute_feats/compute_fbank
+  imports:
+    wave_set: plugins.normalize
+  options:
+    sample_frequency: ${params.fbank.frequency}
+    frame_length: ${params.fbank.frame_len}
+    frame_shift: ${params.fbank.frame_step}
+    low_freq: ${params.fbank.low_freq}
+    high_freq: ${params.fbank.high_freq}
+    num_mel_bins: ${params.fbank.num_mel_bins}
+    snip_edges: true
+
+chunker:
+  module: rirtk.data.chunker/Chunker
+  imports:
+    classes: plugins.classes
+  options:
+    chunk_size: ${params.chunk.chunk_size}
+    chunk_shift: ${params.chunk.chunk_shift}
+    rand_start: ${params.chunk.rand_start}
+    num_per_utt: ${params.chunk.num_per_utt}
+
+make_chunks:
+  module: rirtk.utils.make_chunks/make_chunks
+  imports:
+    chunker: plugins.chunker
+    align_set: plugins.align_set
+    feats_set: plugins.compute_feats
+  options:
+    align_from_utid: ${params.chunk.align_from_utid}
+    tolerance: ${params.chunk.tolerance}
+
+execute:
+  method: rirtk.utils.input_output/write_data
+  imports:
+    data_set: plugins.make_chunks
+#  options:
+#    compress: ${params.chunk.compress}
+#    directory: ${data_dir}
+#    write_spec: ark,scp:${data_dir}/wav.ark,${data_dir}/wav.scp

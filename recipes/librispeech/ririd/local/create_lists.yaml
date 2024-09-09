@@ -1,0 +1,50 @@
+#!/bin/env inex
+
+params: ${__fetch__:local/parameters.yaml}
+
+plugins:
+  - create_train_scp
+  - create_valid_scp
+  - create_test_scp
+  - create_musan_scp
+  - create_rir_scp
+
+create_train_scp:
+  module: rirtk.utils.create_lists/create_scp
+  options:
+    pathnames: ${params.train_masks}
+    path_scp: ${params.train_scp}
+    recursive: true
+
+create_valid_scp:
+  module: rirtk.utils.create_lists/create_scp
+  options:
+    pathnames: ${params.valid_masks}
+    path_scp: ${params.valid_scp}
+    recursive: true
+
+create_test_scp:
+  module: rirtk.utils.create_lists/create_scp
+  options:
+    pathnames: ${params.test_masks}
+    path_scp: ${params.test_scp}
+    recursive: true
+
+create_musan_scp:
+  module: rirtk.utils.create_lists/create_musan_scp
+  options:
+    musan_root: ${params.musan_root}
+    musan_scp: ${params.musan_scp}
+
+create_rir_scp:
+  module: rirtk.utils.create_lists/create_rir_scp
+  options:
+    pathnames: ${params.rir_masks}
+    path_scp: ${params.rir_scp}
+    recursive: true
+
+execute:
+  method: rirtk.utils.create_lists/create_classes
+  options:
+    path_scp: ${params.rir_scp}
+    path_classes: ${params.classes}

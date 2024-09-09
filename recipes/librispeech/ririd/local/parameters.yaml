@@ -1,0 +1,72 @@
+init:
+  random_seed: 0
+  cudnn_enabled: true
+  cudnn_benchmark: false
+  cudnn_deterministic: false
+
+wave:
+  train_masks:
+    - data/LibriSpeech/train-clean-100/**/*.flac
+    - data/LibriSpeech/train-clean-360/**/*.flac
+  valid_masks:
+    - data/LibriSpeech/dev-clean/**/*.flac
+  test_masks:
+    - data/LibriSpeech/test-clean/**/*.flac
+  rir_masks:
+    - data/RIRS_NOISES/simulated_rirs/smallroom/**/*.wav
+    - data/RIRS_NOISES/simulated_rirs/mediumroom/**/*.wav
+  musan_root: data/musan
+
+align:
+  train_vad:
+    - data/vad_alignment/train_clean_100.ark.gz
+    - data/vad_alignment/train_clean_360.ark.gz
+  valid_vad:
+    - data/vad_alignment/dev_clean.ark.gz
+  test_vad:
+    - data/vad_alignment/test_clean.ark.gz
+
+paths:
+  data_version: v1
+  train_data_dir: exp/data/${.data_version}/train
+  valid_data_dir: exp/data/${.data_version}/valid
+  test_data_dir: exp/data/${.data_version}/test
+  train_scp: ${.train_data_dir}/wav.scp
+  train_dur: ${.train_data_dir}/utt2dur
+  valid_scp: ${.valid_data_dir}/wav.scp
+  valid_dur: ${.valid_data_dir}/utt2dur
+  test_scp: ${.test_data_dir}/wav.scp
+  test_dur: ${.test_data_dir}/utt2dur
+  musan_scp: exp/data/musan.scp
+  rir_scp: exp/data/rir.scp
+  classes: exp/data/classes
+
+feats:
+  align_from_utid: '^(\d+-\d+-\d+)$'
+  room_from_ririd: '^([sml]Room\d{3})-\d+$'
+  tolerance: 10
+  snr_range: [10, 25]
+  max_level: 19159.6
+  train_repeats: 1
+  valid_repeats: 3
+  test_repeats: 3
+  batch_size: 16
+  num_workers: 4
+
+fbank:
+  frequency: 16000
+  frame_len: 25
+  frame_step: 10
+  low_freq: 1000
+  high_freq: 5000
+  num_mel_bins: 96
+
+chunk:
+  align_from_utid: '^(\d+-\d+-\d+)#[sml]Room\d{3}-\d+%\S+$'
+  ririd_from_utid: '^\d+-\d+-\d+#([sml]Room\d{3}-\d+)%\S+$'
+  chunk_size: 31
+  chunk_shift: 10
+  rand_start: true
+  tolerance: 0
+  num_per_utt: 4
+  compress: true

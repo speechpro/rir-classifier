@@ -1,0 +1,61 @@
+#!/bin/env inex
+
+db_root: db
+data_root: data
+db_root_url: http://www.openslr.org/resources/12
+db_part_name: dev-clean
+db_part_md5: 42e2234ba48799c1f50f24a7926300a1
+#db_part_name: dev-other
+#db_part_md5: c8d0bcc9cca99d4f8b62fcc847357931
+#db_part_name: test-clean
+#db_part_md5: 32fa31d27d2e1cad72775fee3f4849a9
+#db_part_name: test-other
+#db_part_md5: fb5a50374b501bb3bac4815ee91d3135
+#db_part_name: train-clean-100
+#db_part_md5: 2a93770f6d5c6c964bc36631d331a522
+#db_part_name: train-clean-360
+#db_part_md5: c0e676e450a7ff2f54aeade5171606fa
+#db_part_name: train-other-500
+#db_part_md5: d1a0fd59409feb2c614ce4d30c387708
+logs_dir: logs/02_prepare_librispeech
+
+plugins:
+  - download
+  - unpack
+
+download:
+  module: inex.helpers/execute
+  options:
+    executable: wget
+    arguments:
+      - -nv
+      - -c
+      - -O
+      - ${db_root}/${db_part_name}.tar.gz
+      - --no-check-certificate
+      - ${db_root_url}/${db_part_name}.tar.gz
+    title: 'Downloading ${db_part_name} from openslr.org'
+    make_dirs: ${db_root}
+    log_file: ${logs_dir}/download_${db_part_name}.log.gz
+    done_mark: ${logs_dir}/download_${db_part_name}.done
+    disable: false
+    silent: false
+
+unpack:
+  module: inex.helpers/execute
+  options:
+    executable: tar
+    arguments:
+      - -xf
+      - ${db_root}/${db_part_name}.tar.gz
+      - -C
+      - ${data_root}
+    title: 'Unpacking ${db_part_name} to ${data_root}'
+    check_md5:
+      path: ${db_root}/${db_part_name}.tar.gz
+      md5: ${db_part_md5}
+    make_dirs: ${data_root}
+    log_file: ${logs_dir}/unpack_${db_part_name}.log.gz
+    done_mark: ${logs_dir}/unpack_${db_part_name}.done
+    disable: false
+    silent: false

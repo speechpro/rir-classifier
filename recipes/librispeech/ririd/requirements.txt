@@ -1,0 +1,10 @@
+--extra-index-url https://download.pytorch.org/whl/cu118
+torch
+torchaudio
+torchvision
+pytorch_lightning
+torchmetrics
+inex-launcher
+prettytable
+kaldiio
+tqdm
