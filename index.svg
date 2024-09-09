@@ -61,8 +61,8 @@
             </style>
             <body>
                 <div id="main">
-                    <h1>RIR Classifier</h1>
-                    <h2>Under construction</h2>
+                    <h1>Under construction</h1>
+                    <h2>Recipe for training and testing RIR classifier</h2>
                     <div id="progress"><div id="fill"><div id="barpercent"><h3>40%</h3></div></div></div>
                     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400" rel="stylesheet" />
                 </div>
