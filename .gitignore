@@ -10,7 +10,7 @@ __pycache__/
 /dist/
 /commands.txt
 /rirtk/version.py
-data/
+/recipes/**/data/
 db/
 exp/
 logs/

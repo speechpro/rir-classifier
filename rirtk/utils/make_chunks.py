@@ -1,13 +1,13 @@
 import re
 import logging
 import numpy as np
-from typing import Iterable, Tuple
 from rirtk.data.chunker import Chunker
+from typing import Iterable, Tuple, List, Dict
 
 
 def make_chunks(
         chunker: Chunker,
-        align_set: Iterable[Tuple[str, np.ndarray]],
+        align_set: Dict[str, np.ndarray],
         feats_set: Iterable[Tuple[str, np.ndarray]],
         align_from_utid: str = None,
         num_chunks: int = None,
@@ -36,12 +36,20 @@ def make_chunks(
             length = min(feats_len, align_len)
             feats = feats[0: length]
             align = align[0: length]
-        inputs, labels = chunker(feats_utid, feats, align)
-        for chunk, label in zip(inputs, labels):
-            yield f'{feats_utid}^{label}', chunk
+        chunks = chunker(feats_utid, feats, align)
+        for chunk, label, shift in chunks:
+            yield f'{feats_utid}^{shift}@{label}', chunk
             num_done += 1
             if (num_chunks is not None) and (num_done == num_chunks):
                 break
         if (num_chunks is not None) and (num_done == num_chunks):
             break
     logging.info(f'Generated {num_done} chunks')
+
+
+def unfold_batches(
+        data_set: Iterable[List[Tuple[str, np.ndarray[np.float32]]]],
+) -> Iterable[Tuple[str, np.ndarray[np.float32]]]:
+    for batch in data_set:
+        for utid, chunk in batch:
+            yield utid, chunk

@@ -76,3 +76,7 @@ chunk:
   valid_num_chunks: 10000
   test_num_chunks: 10000
   compress: true
+
+shuffle:
+  batch_size: 32
+  num_workers: 8

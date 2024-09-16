@@ -7,8 +7,8 @@ import numpy as np
 from tqdm import tqdm
 from pathlib import Path
 from inex.helpers import OptionalFile
-from kaldiio import ReadHelper, WriteHelper
-from torch.utils.data import IterableDataset
+from kaldiio import ReadHelper, WriteHelper, load_scp
+from torch.utils.data import Dataset, IterableDataset
 from kaldiio.compression_header import kSpeechFeature
 from typing import Optional, Union, List, Dict, Iterable, Tuple
 
@@ -127,6 +127,26 @@ class AudioSet(IterableDataset):
 
     def __iter__(self):
         return iter(self.items())
+
+    def __call__(self, batch):
+        return batch
+
+
+class LazyFeatsSet(Dataset):
+    def __init__(self, feats_scp: str):
+        super().__init__()
+        logging.debug(f'Loading features keys from {feats_scp}')
+        assert Path(feats_scp).is_file(), f'File {feats_scp} does not exist'
+        self.data = load_scp(feats_scp)
+        self.keys = [key for key in self.data.keys()]
+        logging.debug(f'Loaded {len(self.keys)} keys')
+
+    def __len__(self):
+        return len(self.keys)
+
+    def __getitem__(self, item):
+        key = self.keys[item]
+        return key, self.data[key]
 
     def __call__(self, batch):
         return batch

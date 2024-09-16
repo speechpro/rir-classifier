@@ -1,0 +1,42 @@
+#!/bin/env inex
+
+batch_size: ???
+num_workers: ???
+compress: ???
+data_dir: ???
+
+plugins:
+  - feats_set
+  - data_loader
+  - unfold_batches
+
+feats_set:
+  module: rirtk.utils.input_output/LazyFeatsSet
+  options:
+    feats_scp: ${data_dir}/chunks.scp
+
+data_loader:
+  module: torch.utils.data.dataloader/DataLoader
+  imports:
+    dataset: plugins.feats_set
+    collate_fn: plugins.feats_set
+  options:
+    batch_size: ${batch_size}
+    num_workers: ${num_workers}
+    shuffle: true
+    drop_last: false
+
+unfold_batches:
+  module: rirtk.utils.make_chunks/unfold_batches
+  imports:
+    data_set: plugins.data_loader
+
+execute:
+  method: rirtk.utils.input_output/write_data
+  imports:
+    data_set: plugins.unfold_batches
+  options:
+    tqdm_desc: 'Writing shuffled chunks'
+    compress: ${compress}
+    directory: ${data_dir}/data
+    write_spec: ark,scp:${data_dir}/data/chunks_shuf.ark,${data_dir}/chunks_shuf.scp

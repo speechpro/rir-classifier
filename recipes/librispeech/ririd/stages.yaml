@@ -19,6 +19,7 @@ plugins:
   - prepare_train_data
   - prepare_valid_data
   - prepare_test_data
+  - shuffle_chunks
 
 download_rirs:
   module: inex.helpers/stage
@@ -160,3 +161,15 @@ prepare_test_data:
       num_per_utt: ${params.chunk.test_num_per_utt}
       num_chunks: ${params.chunk.test_num_chunks}
     done_mark: ${logs_root}/06_prepare_data/prepare_test_data.done
+
+shuffle_chunks:
+  module: inex.helpers/stage
+  options:
+    config_path: local/shuffle_chunks.yaml
+    title: 'Shuffling training chunks'
+    override:
+      batch_size: ${params.shuffle.batch_size}
+      num_workers: ${params.shuffle.num_workers}
+      compress: ${params.chunk.compress}
+      data_dir: ${params.paths.train_data_dir}
+    done_mark: ${logs_root}/06_prepare_data/shuffle_chunks.done

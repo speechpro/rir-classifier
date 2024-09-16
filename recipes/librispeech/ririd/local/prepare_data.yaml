@@ -71,6 +71,7 @@ align_seg:
   imports:
     align_set: plugins.align_raw
   options:
+    frequency: ${params.fbank.frequency}
     frame_len: ${params.fbank.frame_len}
     frame_step: ${params.fbank.frame_step}
 

@@ -24,10 +24,13 @@ class AlignSet:
     def __init__(
             self,
             align_set: Dict[str, np.ndarray[Union[int, float]]],
-            frame_len: int,
-            frame_step: int,
+            frequency: int,
+            frame_len: float,
+            frame_step: float,
     ):
         logging.info('Converting alignments')
+        frame_len = round(frequency * frame_len / 1000)
+        frame_step = round(frequency * frame_step / 1000)
         self.data = dict()
         for utid, align in tqdm(align_set.items(), mininterval=3, desc='Converting alignments'):
             segms = list()
@@ -189,7 +192,7 @@ def reverberate(
         rir_set: MemDataSet,
         noise_set: MemDataSet,
         # align_set: Dict[str, np.ndarray[Union[int, float]]],
-        align_set: Dict[str, Segment],
+        align_set: Dict[str, List[Segment]],
         wave_set: SeqDataSet,
         frequency: int,
         # frame_len: float,
