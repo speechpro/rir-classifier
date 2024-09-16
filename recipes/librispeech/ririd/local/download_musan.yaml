@@ -3,9 +3,9 @@
 db_root: db
 data_root: data
 db_root_url: https://www.openslr.org/resources/17
-db_part_name: musan
-db_part_md5: 0c472d4fc0c5141eca47ad1ffeb2a7df
-logs_dir: logs/01_prepare_rirs
+db_part_name: ???  # musan
+db_part_md5: ???  # 0c472d4fc0c5141eca47ad1ffeb2a7df
+logs_dir: ???  # logs/01_prepare_rirs
 
 plugins:
   - download

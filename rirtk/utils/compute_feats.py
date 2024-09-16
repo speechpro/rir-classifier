@@ -1,10 +1,13 @@
 import torch
 import numpy as np
-from typing import Dict
+from typing import Iterable, Tuple
 from torchaudio.compliance import kaldi
 
 
-def compute_fbank(wave_set: Dict, **kwargs):
+def compute_fbank(
+        wave_set: Iterable[Tuple[str, Tuple[int, np.ndarray[np.float32]]]],
+        **kwargs,
+) -> Iterable[Tuple[str, np.ndarray[np.float32]]]:
     for utid, (freq, samps) in wave_set:
         assert samps.dtype == np.float32, f'Wrong wave form samples type {samps.dtype} (must be np.float32)'
         if 'sample_frequency' in kwargs:

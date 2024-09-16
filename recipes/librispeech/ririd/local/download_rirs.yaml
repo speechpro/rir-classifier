@@ -3,9 +3,9 @@
 db_root: db
 data_root: data
 db_root_url: http://www.openslr.org/resources/28
-db_part_name: rirs_noises
-db_part_md5: e6f48e257286e05de56413b4779d8ffb
-logs_dir: logs/01_prepare_rirs
+db_part_name: ???  # rirs_noises
+db_part_md5: ???  # e6f48e257286e05de56413b4779d8ffb
+logs_dir: ???  # logs/01_prepare_rirs
 
 plugins:
   - download

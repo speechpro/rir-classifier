@@ -3,8 +3,9 @@ import torch
 import random
 import logging
 import numpy as np
-from typing import List, Tuple, Dict
+from tqdm import tqdm
 from torchaudio.functional import convolve
+from typing import Dict, List, Tuple, Union
 from rirtk.utils.input_output import int16_to_float32, MemDataSet, SeqDataSet
 
 
@@ -20,9 +21,15 @@ class Segment:
 
 
 class AlignSet:
-    def __init__(self, align_set: Dict, frame_len: int, frame_step: int):
+    def __init__(
+            self,
+            align_set: Dict[str, np.ndarray[Union[int, float]]],
+            frame_len: int,
+            frame_step: int,
+    ):
+        logging.info('Converting alignments')
         self.data = dict()
-        for utid, align in align_set.items():
+        for utid, align in tqdm(align_set.items(), mininterval=3, desc='Converting alignments'):
             segms = list()
             for i, label in enumerate(align):
                 speech = (label > 0.5)
@@ -37,14 +44,15 @@ class AlignSet:
                 segm.begin *= frame_step
                 segm.end = segm.begin + length
             self.data[utid] = segms
+        logging.info(f'  converted {len(self.data)} alignments')
 
-    def __contains__(self, utid):
+    def __contains__(self, utid: str) -> bool:
         return utid in self.data
 
-    def __getitem__(self, utid):
+    def __getitem__(self, utid: str) -> List[Segment]:
         return self.data[utid]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.data)
 
 
@@ -180,11 +188,12 @@ def reverberate(
         device: torch.device,
         rir_set: MemDataSet,
         noise_set: MemDataSet,
-        align_set: Dict[str, np.ndarray],
+        # align_set: Dict[str, np.ndarray[Union[int, float]]],
+        align_set: Dict[str, Segment],
         wave_set: SeqDataSet,
         frequency: int,
-        frame_len: float,
-        frame_step: float,
+        # frame_len: float,
+        # frame_step: float,
         tolerance: float,
         snr_range: List[float],
         num_repeats: int,
@@ -192,8 +201,8 @@ def reverberate(
         align_from_utid: str,
         room_from_ririd: str,
 ):
-    frame_len = round(frequency * frame_len / 1000)
-    frame_step = round(frequency * frame_step / 1000)
+    # frame_len = round(frequency * frame_len / 1000)
+    # frame_step = round(frequency * frame_step / 1000)
     tolerance = round(frequency * tolerance / 1000)
 
     align_from_utid = re.compile(align_from_utid)
@@ -214,9 +223,9 @@ def reverberate(
         else:
             rirs_by_room[room] = [pair]
 
-    logging.info('Converting alignments')
-    align_set = AlignSet(align_set, frame_len, frame_step)
-    logging.info(f'  converted {len(align_set)} alignments')
+    # logging.info('Converting alignments')
+    # align_set = AlignSet(align_set, frame_len, frame_step)
+    # logging.info(f'  converted {len(align_set)} alignments')
 
     noise_set = NoiseSet(frequency, noise_set)
     noise_set = iter(noise_set.items())

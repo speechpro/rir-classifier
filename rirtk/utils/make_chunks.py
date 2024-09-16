@@ -1,15 +1,16 @@
 import re
 import logging
 import numpy as np
-from typing import Dict
+from typing import Iterable, Tuple
 from rirtk.data.chunker import Chunker
 
 
 def make_chunks(
         chunker: Chunker,
-        align_set: Dict[str, np.ndarray],
-        feats_set: Dict[str, np.ndarray],
+        align_set: Iterable[Tuple[str, np.ndarray]],
+        feats_set: Iterable[Tuple[str, np.ndarray]],
         align_from_utid: str = None,
+        num_chunks: int = None,
         tolerance: int = 0,
 ):
     if align_from_utid is not None:
@@ -38,5 +39,9 @@ def make_chunks(
         inputs, labels = chunker(feats_utid, feats, align)
         for chunk, label in zip(inputs, labels):
             yield f'{feats_utid}^{label}', chunk
-        num_done += len(inputs)
+            num_done += 1
+            if (num_chunks is not None) and (num_done == num_chunks):
+                break
+        if (num_chunks is not None) and (num_done == num_chunks):
+            break
     logging.info(f'Generated {num_done} chunks')

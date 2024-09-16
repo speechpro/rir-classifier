@@ -12,39 +12,39 @@ plugins:
 create_train_scp:
   module: rirtk.utils.create_lists/create_scp
   options:
-    pathnames: ${params.train_masks}
-    path_scp: ${params.train_scp}
+    pathnames: ${params.wave.train_masks}
+    path_scp: ${params.paths.train_scp}
     recursive: true
 
 create_valid_scp:
   module: rirtk.utils.create_lists/create_scp
   options:
-    pathnames: ${params.valid_masks}
-    path_scp: ${params.valid_scp}
+    pathnames: ${params.wave.valid_masks}
+    path_scp: ${params.paths.valid_scp}
     recursive: true
 
 create_test_scp:
   module: rirtk.utils.create_lists/create_scp
   options:
-    pathnames: ${params.test_masks}
-    path_scp: ${params.test_scp}
+    pathnames: ${params.wave.test_masks}
+    path_scp: ${params.paths.test_scp}
     recursive: true
 
 create_musan_scp:
   module: rirtk.utils.create_lists/create_musan_scp
   options:
-    musan_root: ${params.musan_root}
-    musan_scp: ${params.musan_scp}
+    musan_root: ${params.wave.musan_root}
+    musan_scp: ${params.paths.musan_scp}
 
 create_rir_scp:
   module: rirtk.utils.create_lists/create_rir_scp
   options:
-    pathnames: ${params.rir_masks}
-    path_scp: ${params.rir_scp}
+    pathnames: ${params.wave.rir_masks}
+    path_scp: ${params.paths.rir_scp}
     recursive: true
 
 execute:
   method: rirtk.utils.create_lists/create_classes
   options:
-    path_scp: ${params.rir_scp}
-    path_classes: ${params.classes}
+    path_scp: ${params.paths.rir_scp}
+    path_classes: ${params.paths.classes}

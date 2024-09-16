@@ -27,6 +27,7 @@ align:
     - data/vad_alignment/test_clean.ark.gz
 
 paths:
+  logs_root: logs
   data_version: v1
   train_data_dir: exp/data/${.data_version}/train
   valid_data_dir: exp/data/${.data_version}/valid
@@ -48,8 +49,8 @@ feats:
   snr_range: [10, 25]
   max_level: 19159.6
   train_repeats: 1
-  valid_repeats: 3
-  test_repeats: 3
+  valid_repeats: 1
+  test_repeats: 1
   batch_size: 16
   num_workers: 4
 
@@ -68,5 +69,10 @@ chunk:
   chunk_shift: 10
   rand_start: true
   tolerance: 0
-  num_per_utt: 4
+  train_num_per_utt: 4
+  valid_num_per_utt: 1
+  test_num_per_utt: 1
+  train_num_chunks: null
+  valid_num_chunks: 10000
+  test_num_chunks: 10000
   compress: true

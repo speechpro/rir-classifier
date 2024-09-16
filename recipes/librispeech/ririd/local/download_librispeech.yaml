@@ -3,8 +3,9 @@
 db_root: db
 data_root: data
 db_root_url: http://www.openslr.org/resources/12
-db_part_name: dev-clean
-db_part_md5: 42e2234ba48799c1f50f24a7926300a1
+
+#db_part_name: dev-clean
+#db_part_md5: 42e2234ba48799c1f50f24a7926300a1
 #db_part_name: dev-other
 #db_part_md5: c8d0bcc9cca99d4f8b62fcc847357931
 #db_part_name: test-clean
@@ -17,7 +18,11 @@ db_part_md5: 42e2234ba48799c1f50f24a7926300a1
 #db_part_md5: c0e676e450a7ff2f54aeade5171606fa
 #db_part_name: train-other-500
 #db_part_md5: d1a0fd59409feb2c614ce4d30c387708
-logs_dir: logs/02_prepare_librispeech
+#logs_dir: logs/02_prepare_librispeech
+
+db_part_name: ???
+db_part_md5: ???
+logs_dir: ???
 
 plugins:
   - download

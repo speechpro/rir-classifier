@@ -1,7 +1,11 @@
 import numpy as np
+from typing import Iterable, Tuple
 
 
-def set_max_level(wave_set, max_level):
+def set_max_level(
+        wave_set: Iterable[Tuple[str, Tuple[int, np.ndarray]]],
+        max_level: float,
+) -> Iterable[Tuple[str, Tuple[int, np.ndarray]]]:
     for utid, (freq, samps) in wave_set:
         if samps.dtype != np.float32:
             samps = samps.astype(np.float32)

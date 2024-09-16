@@ -1,0 +1,162 @@
+#!/bin/env inex
+
+params: ${__fetch__:local/parameters.yaml}
+
+logs_root: ${params.paths.logs_root}
+
+plugins:
+  - download_rirs
+  - download_musan
+  - download_dev_clean
+  - download_dev_other
+  - download_test_clean
+  - download_test_other
+  - download_train_clean_100
+  - download_train_clean_360
+  - download_train_other_500
+  - create_lists
+  - compute_durations
+  - prepare_train_data
+  - prepare_valid_data
+  - prepare_test_data
+
+download_rirs:
+  module: inex.helpers/stage
+  options:
+    config_path: local/download_rirs.yaml
+    override:
+      db_part_name: rirs_noises
+      db_part_md5: e6f48e257286e05de56413b4779d8ffb
+      logs_dir: ${logs_root}/01_prepare_rirs
+
+download_musan:
+  module: inex.helpers/stage
+  options:
+    config_path: local/download_musan.yaml
+    override:
+      db_part_name: musan
+      db_part_md5: 0c472d4fc0c5141eca47ad1ffeb2a7df
+      logs_dir: ${logs_root}/02_prepare_musan
+
+download_dev_clean:
+  module: inex.helpers/stage
+  options:
+    config_path: local/download_librispeech.yaml
+    override:
+      db_part_name: dev-clean
+      db_part_md5: 42e2234ba48799c1f50f24a7926300a1
+      logs_dir: ${logs_root}/03_prepare_librispeech
+
+download_dev_other:
+  module: inex.helpers/stage
+  options:
+    config_path: local/download_librispeech.yaml
+    override:
+      db_part_name: dev-other
+      db_part_md5: c8d0bcc9cca99d4f8b62fcc847357931
+      logs_dir: ${logs_root}/03_prepare_librispeech
+
+download_test_clean:
+  module: inex.helpers/stage
+  options:
+    config_path: local/download_librispeech.yaml
+    override:
+      db_part_name: test-clean
+      db_part_md5: 32fa31d27d2e1cad72775fee3f4849a9
+      logs_dir: ${logs_root}/03_prepare_librispeech
+
+download_test_other:
+  module: inex.helpers/stage
+  options:
+    config_path: local/download_librispeech.yaml
+    override:
+      db_part_name: test-other
+      db_part_md5: fb5a50374b501bb3bac4815ee91d3135
+      logs_dir: ${logs_root}/03_prepare_librispeech
+
+download_train_clean_100:
+  module: inex.helpers/stage
+  options:
+    config_path: local/download_librispeech.yaml
+    override:
+      db_part_name: train-clean-100
+      db_part_md5: 2a93770f6d5c6c964bc36631d331a522
+      logs_dir: ${logs_root}/03_prepare_librispeech
+
+download_train_clean_360:
+  module: inex.helpers/stage
+  options:
+    config_path: local/download_librispeech.yaml
+    override:
+      db_part_name: train-clean-360
+      db_part_md5: c0e676e450a7ff2f54aeade5171606fa
+      logs_dir: ${logs_root}/03_prepare_librispeech
+
+download_train_other_500:
+  module: inex.helpers/stage
+  options:
+    config_path: local/download_librispeech.yaml
+    override:
+      db_part_name: train-other-500
+      db_part_md5: d1a0fd59409feb2c614ce4d30c387708
+      logs_dir: ${logs_root}/03_prepare_librispeech
+    disable: true
+
+create_lists:
+  module: inex.helpers/stage
+  options:
+    config_path: local/create_lists.yaml
+    title: 'Creating train, valid and test data lists'
+    done_mark: ${logs_root}/04_create_lists/create_lists.done
+
+compute_durations:
+  module: inex.helpers/stage
+  options:
+    config_path: local/compute_durations.yaml
+    title: 'Calculating duration of utterances'
+    done_mark: ${logs_root}/05_compute_durations/compute_durations.done
+
+prepare_train_data:
+  module: inex.helpers/stage
+  options:
+    config_path: local/prepare_data.yaml
+    title: 'Preparing train data chunks'
+    override:
+      vad_align: ${params.align.train_vad}
+      wav_scp: ${params.paths.train_scp}
+      utt2dur: ${params.paths.train_dur}
+      data_dir: ${params.paths.train_data_dir}
+      num_repeats: ${params.feats.train_repeats}
+      num_per_utt: ${params.chunk.train_num_per_utt}
+      num_chunks: ${params.chunk.train_num_chunks}
+    done_mark: ${logs_root}/06_prepare_data/prepare_train_data.done
+
+prepare_valid_data:
+  module: inex.helpers/stage
+  options:
+    config_path: local/prepare_data.yaml
+    title: 'Preparing valid data chunks'
+    override:
+      vad_align: ${params.align.valid_vad}
+      wav_scp: ${params.paths.valid_scp}
+      utt2dur: ${params.paths.valid_dur}
+      data_dir: ${params.paths.valid_data_dir}
+      num_repeats: ${params.feats.valid_repeats}
+      num_per_utt: ${params.chunk.valid_num_per_utt}
+      num_chunks: ${params.chunk.valid_num_chunks}
+    done_mark: ${logs_root}/06_prepare_data/prepare_valid_data.done
+
+prepare_test_data:
+  module: inex.helpers/stage
+  options:
+    config_path: local/prepare_data.yaml
+    title: 'Preparing test data chunks'
+    override:
+      vad_align: ${params.align.test_vad}
+      wav_scp: ${params.paths.test_scp}
+      utt2dur: ${params.paths.test_dur}
+      data_dir: ${params.paths.test_data_dir}
+      num_repeats: ${params.feats.test_repeats}
+      num_per_utt: ${params.chunk.test_num_per_utt}
+      num_chunks: ${params.chunk.test_num_chunks}
+    done_mark: ${logs_root}/06_prepare_data/prepare_test_data.done

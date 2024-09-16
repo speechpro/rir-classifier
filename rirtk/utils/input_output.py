@@ -7,20 +7,20 @@ import numpy as np
 from tqdm import tqdm
 from pathlib import Path
 from inex.helpers import OptionalFile
-from typing import Optional, Union, List
 from kaldiio import ReadHelper, WriteHelper
 from torch.utils.data import IterableDataset
 from kaldiio.compression_header import kSpeechFeature
+from typing import Optional, Union, List, Dict, Iterable, Tuple
 
 
-def int16_to_float32(samples: np.ndarray):
+def int16_to_float32(samples: np.ndarray[np.int16]) -> np.ndarray[np.float32]:
     if samples.dtype == np.int16:
         samples = samples.astype(np.float32)
         samples /= np.abs(np.iinfo(np.int16).min)
     return samples
 
 
-def float32_to_int16(samples: np.ndarray):
+def float32_to_int16(samples: np.ndarray[np.float32]) -> np.ndarray[np.int16]:
     if samples.dtype == np.float32:
         max_value = max(abs(samples.min()), abs(samples.max()))
         assert max_value < 1.00001, f'Wring maximum absolute sample value {max_value} (must be less or equal 1)'
@@ -39,7 +39,11 @@ def list_files(pathnames: Union[str, List[str]], recursive=True) -> List[str]:
     return list(paths)
 
 
-def read_vectors_from_text_ark(pathnames, recursive=True, dtype=np.int32):
+def read_vectors_from_text_ark(
+        pathnames: Union[str, List[str]],
+        recursive: bool = True,
+        dtype=np.int32,
+) -> Dict[str, np.ndarray]:
     if isinstance(pathnames, str):
         pathnames = [pathnames]
     logging.debug(f'Loading vectors from\n{pathnames}')
@@ -98,7 +102,7 @@ class AudioSet(IterableDataset):
             self.paths = [(utid, path) for _, utid, path in self.paths]
         self.num_loops = num_loops
 
-    def items(self):
+    def items(self) -> Iterable[Tuple[str, Tuple[int, np.ndarray]]]:
         num_done = 0
         num_loops = 0
         while True:
@@ -264,6 +268,7 @@ def write_data(
         compress=False,
         write_function=None,
         disable_tqdm=False,
+        tqdm_desc='Writing data',
 ):
     if directory is not None:
         directory = Path(directory).absolute()
@@ -282,7 +287,7 @@ def write_data(
     logging.info(f'Writing data to {write_spec}')
     num_done = 0
     with WriteHelper(write_spec, compression_method=comp_method, write_function=write_function) as writer:
-        for utid, data in tqdm(data_set, mininterval=3, disable=disable_tqdm):
+        for utid, data in tqdm(data_set, mininterval=3, disable=disable_tqdm, desc=tqdm_desc):
             writer(utid, data)
             num_done += 1
     logging.info(f'  wrote {num_done} data items')

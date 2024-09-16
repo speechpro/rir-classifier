@@ -2,11 +2,13 @@
 
 params: ${__fetch__:local/parameters.yaml}
 
-vad_align: ${params.align.valid_vad}
-wav_scp: ${params.paths.valid_scp}
-utt2dur: ${params.paths.valid_dur}
-data_dir: ${params.paths.valid_data_dir}
-num_repeats: ${params.feats.valid_repeats}
+vad_align: ???  # ${params.align.valid_vad}
+wav_scp: ???  # ${params.paths.valid_scp}
+utt2dur: ???  # ${params.paths.valid_dur}
+data_dir: ???  # ${params.paths.valid_data_dir}
+num_repeats: ???  # ${params.feats.valid_repeats}
+num_per_utt: ???
+num_chunks: ???
 
 __mute__: [__all__]
 
@@ -17,7 +19,8 @@ plugins:
   - classes
   - rir_set
   - noise_set
-  - align_set
+  - align_raw
+  - align_seg
   - wave_set
   - data_loader
   - reverberate
@@ -58,10 +61,18 @@ noise_set:
   options:
     pathname: ${params.paths.musan_scp}
 
-align_set:
+align_raw:
   module: rirtk.utils.input_output/read_vectors_from_text_ark
   options:
     pathnames: ${vad_align}
+
+align_seg:
+  module: rirtk.utils.reverberate/AlignSet
+  imports:
+    align_set: plugins.align_raw
+  options:
+    frame_len: ${params.fbank.frame_len}
+    frame_step: ${params.fbank.frame_step}
 
 wave_set:
   module: rirtk.utils.input_output/AudioSet
@@ -86,12 +97,12 @@ reverberate:
     device: plugins.device
     rir_set: plugins.rir_set
     noise_set: plugins.noise_set
-    align_set: plugins.align_set
+    align_set: plugins.align_seg
     wave_set: plugins.data_loader
   options:
     frequency: ${params.fbank.frequency}
-    frame_len: ${params.fbank.frame_len}
-    frame_step: ${params.fbank.frame_step}
+#    frame_len: ${params.fbank.frame_len}
+#    frame_step: ${params.fbank.frame_step}
     tolerance: ${params.feats.tolerance}
     snr_range: ${params.feats.snr_range}
     align_from_utid: ${params.feats.align_from_utid}
@@ -127,23 +138,25 @@ chunker:
     chunk_size: ${params.chunk.chunk_size}
     chunk_shift: ${params.chunk.chunk_shift}
     rand_start: ${params.chunk.rand_start}
-    num_per_utt: ${params.chunk.num_per_utt}
+    num_per_utt: ${num_per_utt}
 
 make_chunks:
   module: rirtk.utils.make_chunks/make_chunks
   imports:
     chunker: plugins.chunker
-    align_set: plugins.align_set
+    align_set: plugins.align_raw
     feats_set: plugins.compute_feats
   options:
     align_from_utid: ${params.chunk.align_from_utid}
+    num_chunks: ${num_chunks}
     tolerance: ${params.chunk.tolerance}
 
 execute:
   method: rirtk.utils.input_output/write_data
   imports:
     data_set: plugins.make_chunks
-#  options:
-#    compress: ${params.chunk.compress}
-#    directory: ${data_dir}
-#    write_spec: ark,scp:${data_dir}/wav.ark,${data_dir}/wav.scp
+  options:
+    tqdm_desc: 'Writing data chunks'
+    compress: ${params.chunk.compress}
+    directory: ${data_dir}/data
+    write_spec: ark,scp:${data_dir}/data/chunks.ark,${data_dir}/chunks.scp
