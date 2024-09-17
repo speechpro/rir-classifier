@@ -64,7 +64,8 @@ total_steps:
   imports:
     num_batches: train_dataset.num_batches
   options:
-    expression: 'int(1.001 * {num_batches})'
+    num_epochs: ${num_epochs}
+    expression: '{num_epochs} * {num_batches} + 1'
 
 model:
   module: inex.helpers/_import_

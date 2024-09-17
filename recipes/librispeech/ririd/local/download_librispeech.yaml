@@ -18,7 +18,6 @@ db_root_url: http://www.openslr.org/resources/12
 #db_part_md5: c0e676e450a7ff2f54aeade5171606fa
 #db_part_name: train-other-500
 #db_part_md5: d1a0fd59409feb2c614ce4d30c387708
-#logs_dir: logs/02_prepare_librispeech
 
 db_part_name: ???
 db_part_md5: ???
@@ -33,11 +32,11 @@ download:
   options:
     executable: wget
     arguments:
-      - -nv
       - -c
+      - --progress=dot:giga
+      - --no-check-certificate
       - -O
       - ${db_root}/${db_part_name}.tar.gz
-      - --no-check-certificate
       - ${db_root_url}/${db_part_name}.tar.gz
     title: 'Downloading ${db_part_name} from openslr.org'
     make_dirs: ${db_root}

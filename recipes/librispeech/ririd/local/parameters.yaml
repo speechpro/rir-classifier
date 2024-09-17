@@ -19,12 +19,12 @@ wave:
 
 align:
   train_vad:
-    - data/vad_alignment/train_clean_100.ark.gz
-    - data/vad_alignment/train_clean_360.ark.gz
+    - vad/train_clean_100.ark.gz
+    - vad/train_clean_360.ark.gz
   valid_vad:
-    - data/vad_alignment/dev_clean.ark.gz
+    - vad/dev_clean.ark.gz
   test_vad:
-    - data/vad_alignment/test_clean.ark.gz
+    - vad/test_clean.ark.gz
 
 paths:
   logs_root: logs

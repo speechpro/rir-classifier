@@ -27,6 +27,7 @@ install_dependencies:
   module: inex.helpers/stage
   options:
     config_path: local/install_dependencies.yaml
+    final_path: ${logs_root}/00_install_dependencies/install_dependencies.yaml
     override:
       logs_dir: ${logs_root}/00_install_dependencies
 
@@ -34,6 +35,7 @@ download_rirs:
   module: inex.helpers/stage
   options:
     config_path: local/download_rirs.yaml
+    final_path: ${logs_root}/01_prepare_rirs/download_rirs.yaml
     override:
       db_part_name: rirs_noises
       db_part_md5: e6f48e257286e05de56413b4779d8ffb
@@ -43,6 +45,7 @@ download_musan:
   module: inex.helpers/stage
   options:
     config_path: local/download_musan.yaml
+    final_path: ${logs_root}/02_prepare_musan/download_musan.yaml
     override:
       db_part_name: musan
       db_part_md5: 0c472d4fc0c5141eca47ad1ffeb2a7df
@@ -52,6 +55,7 @@ download_dev_clean:
   module: inex.helpers/stage
   options:
     config_path: local/download_librispeech.yaml
+    final_path: ${logs_root}/03_prepare_librispeech/download_dev_clean.yaml
     override:
       db_part_name: dev-clean
       db_part_md5: 42e2234ba48799c1f50f24a7926300a1
@@ -61,6 +65,7 @@ download_dev_other:
   module: inex.helpers/stage
   options:
     config_path: local/download_librispeech.yaml
+    final_path: ${logs_root}/03_prepare_librispeech/download_dev_other.yaml
     override:
       db_part_name: dev-other
       db_part_md5: c8d0bcc9cca99d4f8b62fcc847357931
@@ -70,6 +75,7 @@ download_test_clean:
   module: inex.helpers/stage
   options:
     config_path: local/download_librispeech.yaml
+    final_path: ${logs_root}/03_prepare_librispeech/download_test_clean.yaml
     override:
       db_part_name: test-clean
       db_part_md5: 32fa31d27d2e1cad72775fee3f4849a9
@@ -79,6 +85,7 @@ download_test_other:
   module: inex.helpers/stage
   options:
     config_path: local/download_librispeech.yaml
+    final_path: ${logs_root}/03_prepare_librispeech/download_test_other.yaml
     override:
       db_part_name: test-other
       db_part_md5: fb5a50374b501bb3bac4815ee91d3135
@@ -88,6 +95,7 @@ download_train_clean_100:
   module: inex.helpers/stage
   options:
     config_path: local/download_librispeech.yaml
+    final_path: ${logs_root}/03_prepare_librispeech/download_train_clean_100.yaml
     override:
       db_part_name: train-clean-100
       db_part_md5: 2a93770f6d5c6c964bc36631d331a522
@@ -97,6 +105,7 @@ download_train_clean_360:
   module: inex.helpers/stage
   options:
     config_path: local/download_librispeech.yaml
+    final_path: ${logs_root}/03_prepare_librispeech/download_train_clean_360.yaml
     override:
       db_part_name: train-clean-360
       db_part_md5: c0e676e450a7ff2f54aeade5171606fa
@@ -106,6 +115,7 @@ download_train_other_500:
   module: inex.helpers/stage
   options:
     config_path: local/download_librispeech.yaml
+    final_path: ${logs_root}/03_prepare_librispeech/download_train_other_500.yaml
     override:
       db_part_name: train-other-500
       db_part_md5: d1a0fd59409feb2c614ce4d30c387708
@@ -116,6 +126,7 @@ create_lists:
   module: inex.helpers/stage
   options:
     config_path: local/create_lists.yaml
+    final_path: ${logs_root}/04_create_lists/create_lists.yaml
     title: 'Creating train, valid and test data lists'
     done_mark: ${logs_root}/04_create_lists/create_lists.done
 
@@ -123,6 +134,7 @@ compute_durations:
   module: inex.helpers/stage
   options:
     config_path: local/compute_durations.yaml
+    final_path: ${logs_root}/05_compute_durations/compute_durations.yaml
     title: 'Calculating duration of utterances'
     done_mark: ${logs_root}/05_compute_durations/compute_durations.done
 
@@ -130,6 +142,7 @@ prepare_train_data:
   module: inex.helpers/stage
   options:
     config_path: local/prepare_data.yaml
+    final_path: ${logs_root}/06_prepare_data/prepare_train_data.yaml
     title: 'Preparing train data chunks'
     override:
       vad_align: ${params.align.train_vad}
@@ -145,6 +158,7 @@ prepare_valid_data:
   module: inex.helpers/stage
   options:
     config_path: local/prepare_data.yaml
+    final_path: ${logs_root}/06_prepare_data/prepare_valid_data.yaml
     title: 'Preparing valid data chunks'
     override:
       vad_align: ${params.align.valid_vad}
@@ -155,11 +169,13 @@ prepare_valid_data:
       num_per_utt: ${params.chunk.valid_num_per_utt}
       num_chunks: ${params.chunk.valid_num_chunks}
     done_mark: ${logs_root}/06_prepare_data/prepare_valid_data.done
+    force: true
 
 prepare_test_data:
   module: inex.helpers/stage
   options:
     config_path: local/prepare_data.yaml
+    final_path: ${logs_root}/06_prepare_data/prepare_test_data.yaml
     title: 'Preparing test data chunks'
     override:
       vad_align: ${params.align.test_vad}
@@ -175,6 +191,7 @@ shuffle_chunks:
   module: inex.helpers/stage
   options:
     config_path: local/shuffle_chunks.yaml
+    final_path: ${logs_root}/06_prepare_data/shuffle_chunks.yaml
     title: 'Shuffling training chunks'
     override:
       batch_size: ${params.shuffle.batch_size}
@@ -187,6 +204,7 @@ train_model:
   module: inex.helpers/stage
   options:
     config_path: local/train_model.yaml
+    final_path: ${logs_root}/07_train_model/train_model.yaml
     title: 'Training model'
     override:
       targ_from_chid: ${params.loader.targ_from_chid}

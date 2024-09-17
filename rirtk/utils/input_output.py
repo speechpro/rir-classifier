@@ -47,6 +47,7 @@ def read_vectors_from_text_ark(
     if isinstance(pathnames, str):
         pathnames = [pathnames]
     logging.debug(f'Loading vectors from\n{pathnames}')
+    count = 0
     data = dict()
     for pathname in pathnames:
         for path in glob.iglob(pathname, recursive=recursive):
@@ -70,7 +71,9 @@ def read_vectors_from_text_ark(
                     align = line[index1 + 1: index2]
                     align = np.fromstring(align, dtype=dtype, sep=' ')
                 data[utid] = align
-    logging.debug(f'  loaded {len(data)} vectors')
+            count += 1
+    assert count > 0, f'File(s) {pathnames} does not exist'
+    logging.debug(f'  loaded {len(data)} vectors from {count} files')
     return data
 
 

@@ -2,11 +2,11 @@
 
 params: ${__fetch__:local/parameters.yaml}
 
-vad_align: ???  # ${params.align.valid_vad}
-wav_scp: ???  # ${params.paths.valid_scp}
-utt2dur: ???  # ${params.paths.valid_dur}
-data_dir: ???  # ${params.paths.valid_data_dir}
-num_repeats: ???  # ${params.feats.valid_repeats}
+vad_align: ???
+wav_scp: ???
+utt2dur: ???
+data_dir: ???
+num_repeats: ???
 num_per_utt: ???
 num_chunks: ???
 
@@ -102,8 +102,6 @@ reverberate:
     wave_set: plugins.data_loader
   options:
     frequency: ${params.fbank.frequency}
-#    frame_len: ${params.fbank.frame_len}
-#    frame_step: ${params.fbank.frame_step}
     tolerance: ${params.feats.tolerance}
     snr_range: ${params.feats.snr_range}
     align_from_utid: ${params.feats.align_from_utid}

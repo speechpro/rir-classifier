@@ -5,7 +5,7 @@ data_root: data
 db_root_url: https://www.openslr.org/resources/17
 db_part_name: ???  # musan
 db_part_md5: ???  # 0c472d4fc0c5141eca47ad1ffeb2a7df
-logs_dir: ???  # logs/01_prepare_rirs
+logs_dir: ???
 
 plugins:
   - download
@@ -16,11 +16,11 @@ download:
   options:
     executable: wget
     arguments:
-      - -nv
       - -c
+      - --progress=dot:giga
+      - --no-check-certificate
       - -O
       - ${db_root}/${db_part_name}.tar.gz
-      - --no-check-certificate
       - ${db_root_url}/${db_part_name}.tar.gz
     title: 'Downloading ${db_part_name} from openslr.org'
     make_dirs: ${db_root}
