@@ -1,6 +1,6 @@
 #!/bin/env inex
 
-params: ${__fetch__:local/parameters.yaml}
+paths: ${__fetch__:local/parameters.yaml, paths}
 
 plugins:
   - compute_train
@@ -10,17 +10,17 @@ plugins:
 compute_train:
   module: rirtk.utils.compute_durations/compute_durations
   options:
-    path_scp: ${params.train_scp}
-    path_dur: ${params.train_dur}
+    path_scp: ${paths.train_scp}
+    path_dur: ${paths.train_dur}
 
 compute_valid:
   module: rirtk.utils.compute_durations/compute_durations
   options:
-    path_scp: ${params.valid_scp}
-    path_dur: ${params.valid_dur}
+    path_scp: ${paths.valid_scp}
+    path_dur: ${paths.valid_dur}
 
 compute_test:
   module: rirtk.utils.compute_durations/compute_durations
   options:
-    path_scp: ${params.test_scp}
-    path_dur: ${params.test_dur}
+    path_scp: ${paths.test_scp}
+    path_dur: ${paths.test_dur}

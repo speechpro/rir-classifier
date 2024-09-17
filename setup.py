@@ -51,7 +51,6 @@ setup(
     ],
     install_requires=[
         'inex-launcher',
-        'pytest',
     ],
     packages=find_packages(exclude=['tests']),
     include_package_data=True,
