@@ -7,7 +7,7 @@ import numpy as np
 from tqdm import tqdm
 from pathlib import Path
 from inex.helpers import OptionalFile
-from kaldiio import ReadHelper, WriteHelper, load_scp
+from kaldiio import ReadHelper, WriteHelper, load_mat
 from torch.utils.data import Dataset, IterableDataset
 from kaldiio.compression_header import kSpeechFeature
 from typing import Optional, Union, List, Dict, Iterable, Tuple
@@ -135,20 +135,26 @@ class AudioSet(IterableDataset):
 class LazyFeatsSet(Dataset):
     def __init__(self, feats_scp: str):
         super().__init__()
-        logging.debug(f'Loading features keys from {feats_scp}')
-        assert Path(feats_scp).is_file(), f'File {feats_scp} does not exist'
-        self.data = load_scp(feats_scp)
-        self.keys = [key for key in self.data.keys()]
-        logging.debug(f'Loaded {len(self.keys)} keys')
+        logging.debug(f'Loading features references from {feats_scp}')
+        feats_scp = Path(feats_scp)
+        assert feats_scp.is_file(), f'File {feats_scp} does not exist'
+        lines = feats_scp.read_text(encoding='utf-8').strip().split('\n')
+        lines = [line.strip().split(maxsplit=1) for line in lines]
+        self.data = [(utid, path) for utid, path in lines]
+        logging.debug(f'Loaded {len(self.data)} features references')
 
     def __len__(self):
-        return len(self.keys)
+        return len(self.data)
 
-    def __getitem__(self, item):
-        key = self.keys[item]
-        return key, self.data[key]
+    def __getitem__(self, item: int) -> Tuple[str, np.ndarray[np.float32]]:
+        utid, path = self.data[item]
+        feats = load_mat(path)
+        return utid, feats
 
-    def __call__(self, batch):
+    def __call__(
+            self,
+            batch: List[Tuple[str, np.ndarray[np.float32]]],
+    ) -> List[Tuple[str, np.ndarray[np.float32]]]:
         return batch
 
 

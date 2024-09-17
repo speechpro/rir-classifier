@@ -5,6 +5,9 @@ torchvision
 pytorch_lightning
 torchmetrics
 inex-launcher
+tensorboard
 prettytable
+speechbrain
 kaldiio
+einops
 tqdm

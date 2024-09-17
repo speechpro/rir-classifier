@@ -25,7 +25,7 @@ class Classes:
             if name == self.silence_name:
                 self.silence_id = index
             index += 1
-        assert self.silence_id is not None, f'Failed to find silence class with name {silence} in file {classes}'
+        assert self.silence_id is not None, f'Failed to find silence class with name {self.silence_name} in file {classes}'
         self.num_classes = index
 
     def name_by_id(self, clsid):

@@ -1,0 +1,34 @@
+#!/bin/env inex
+
+params: ${__fetch__:local/parameters.yaml, model}
+
+input_dim: ${params.input_dim}
+embed_dim: ${params.embed_dim}
+output_dim: ???
+
+plugins:
+  - ecapa_tdmm
+  - linear
+  - model
+
+ecapa_tdmm:
+  module: rirtk.models.from_name/from_name
+  options:
+    model_name: EcapaTdnn
+    input_dim: ${input_dim}
+    output_dim: ${embed_dim}
+
+linear:
+  module: rirtk.models.from_name/from_name
+  options:
+    model_name: Linear
+    input_dim: ${embed_dim}
+    output_dim: ${output_dim}
+
+model:
+  module: rirtk.models.from_name/from_name
+  imports:
+    body: plugins.ecapa_tdmm
+    head: plugins.linear
+  options:
+    model_name: Joiner

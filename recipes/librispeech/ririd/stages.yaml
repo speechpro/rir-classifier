@@ -20,6 +20,7 @@ plugins:
   - prepare_valid_data
   - prepare_test_data
   - shuffle_chunks
+  - train_model
 
 download_rirs:
   module: inex.helpers/stage
@@ -173,3 +174,31 @@ shuffle_chunks:
       compress: ${params.chunk.compress}
       data_dir: ${params.paths.train_data_dir}
     done_mark: ${logs_root}/06_prepare_data/shuffle_chunks.done
+
+train_model:
+  module: inex.helpers/stage
+  options:
+    config_path: local/train_model.yaml
+    title: 'Training model'
+    override:
+      targ_from_chid: ${params.loader.targ_from_chid}
+      classes_path: ${params.paths.classes}
+      valid_data_dir: ${params.paths.valid_data_dir}
+      train_data_dir: ${params.paths.train_data_dir}
+      batch_size: ${params.loader.batch_size}
+      num_workers: ${params.loader.num_workers}
+      pin_memory: ${params.loader.pin_memory}
+      model_config: ${params.model.config}
+      lr: ${params.train.lr}
+      num_epochs: ${params.train.num_epochs}
+      stop_after: ${params.train.stop_after}
+      resume_training: ${params.train.resume_training}
+      accelerator: ${params.train.accelerator}
+      devices: ${params.train.devices}
+      num_nodes: ${params.train.num_nodes}
+      ddp_strategy: ${params.train.ddp_strategy}
+      val_check_interval: ${params.train.val_check_interval}
+      log_aver_num: ${params.train.log_aver_num}
+      train_dir: ${params.paths.train_dir}
+    done_mark: ${logs_root}/07_train_model/train_model.done
+    force: true
