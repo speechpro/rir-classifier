@@ -2,11 +2,8 @@
 
 logs_dir: ???
 
-plugins:
-  - install
-
-install:
-  module: inex.helpers/execute
+execute:
+  method: inex.helpers/execute
   options:
     executable: pip
     arguments:

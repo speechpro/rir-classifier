@@ -49,6 +49,8 @@ class BatchSet(Dataset):
             inputs.append(load_mat(path, fd_dict=fd_dict))
         for stream in fd_dict.values():
             stream.close()
+        labels = np.ndarray(labels, dtype=np.int32)
+        inputs = np.stack(inputs)
         labels = torch.tensor(labels, dtype=torch.int64)
         inputs = torch.tensor(inputs, dtype=torch.float32)
         return {
@@ -56,10 +58,3 @@ class BatchSet(Dataset):
             'inputs': inputs,
             'labels': labels,
         }
-
-
-def test_loader(loader):
-    count = 0
-    for batch in loader:
-        count += 1
-    logging.info(f'Processed {count} batches')

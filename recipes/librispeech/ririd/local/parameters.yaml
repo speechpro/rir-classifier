@@ -41,7 +41,7 @@ paths:
   musan_scp: exp/data/musan.scp
   rir_scp: exp/data/rir.scp
   classes: exp/data/classes
-  train_dir: exp/train_eff_net
+  train_dir: exp/train_ecapa_tdnn
 
 feats:
   align_from_utid: '^(\d+-\d+-\d+)$'
