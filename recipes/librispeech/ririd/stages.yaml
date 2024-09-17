@@ -5,6 +5,7 @@ params: ${__fetch__:local/parameters.yaml}
 logs_root: ${params.paths.logs_root}
 
 plugins:
+  - install_dependencies
   - download_rirs
   - download_musan
   - download_dev_clean
@@ -21,6 +22,13 @@ plugins:
   - prepare_test_data
   - shuffle_chunks
   - train_model
+
+install_dependencies:
+  module: inex.helpers/stage
+  options:
+    config_path: local/install_dependencies.yaml
+    override:
+      logs_dir: ${logs_root}/00_install_dependencies
 
 download_rirs:
   module: inex.helpers/stage

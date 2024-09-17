@@ -74,8 +74,8 @@ chunk:
   valid_num_per_utt: 1
   test_num_per_utt: 1
   train_num_chunks: null
-  valid_num_chunks: 10000
-  test_num_chunks: 10000
+  valid_num_chunks: 40000
+  test_num_chunks: 40000
   compress: true
 
 shuffle:
@@ -84,8 +84,8 @@ shuffle:
 
 loader:
   targ_from_chid: '^\d+-\d+-\d+#[sml]Room\d{3}-\d+%\S+\^\d+@(\d+)$'
-  batch_size: 32
-  num_workers: 0
+  batch_size: 128
+  num_workers: 4
   pin_memory: false
 
 model:

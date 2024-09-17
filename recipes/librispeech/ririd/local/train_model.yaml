@@ -20,10 +20,11 @@ val_check_interval: ???
 log_aver_num: ???
 train_dir: ???
 
+__mute__: [module, execute]
+
 plugins:
   - classes
   - valid_dataset
-#  - valid_data_loader
   - train_dataset
   - total_steps
   - model
@@ -49,16 +50,6 @@ valid_dataset:
     targ_from_chid: ${targ_from_chid}
     data_dir: ${valid_data_dir}
     batch_size: ${batch_size}
-
-#valid_data_loader:
-#  module: torch.utils.data.dataloader/DataLoader
-#  imports:
-#    dataset: plugins.valid_dataset
-#  options:
-#    batch_size: null
-#    num_workers: ${num_workers}
-#    shuffle: true
-#    drop_last: false
 
 train_dataset:
   module: rirtk.data.dataset/BatchSet
@@ -172,12 +163,3 @@ execute:
     num_sanity_val_steps: 0
     strategy: ${ddp_strategy}
     default_root_dir: ${train_dir}
-
-#execute:
-#  method: inex.helpers/show
-#  imports:
-#    classes: plugins.classes
-#    num_classes: classes.num_classes
-#    valid_dataset: plugins.valid_dataset
-#    train_dataset: plugins.train_dataset
-#    model: plugins.model

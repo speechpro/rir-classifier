@@ -1,0 +1,20 @@
+#!/bin/env inex
+
+logs_dir: ???
+
+plugins:
+  - install
+
+install:
+  module: inex.helpers/execute
+  options:
+    executable: pip
+    arguments:
+      - install
+      - -r
+      - requirements.txt
+    title: 'Installing required packages'
+    must_exist:
+      - requirements.txt
+    log_file: ${logs_dir}/install_dependencies.log.gz
+    done_mark: ${logs_dir}/install_dependencies.done
