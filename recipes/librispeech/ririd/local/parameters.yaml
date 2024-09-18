@@ -49,7 +49,7 @@ feats:
   tolerance: 10
   snr_range: [10, 25]
   max_level: 19159.6
-  train_repeats: 1
+  train_repeats: 20
   valid_repeats: 1
   test_repeats: 1
   batch_size: 16
@@ -84,7 +84,7 @@ shuffle:
 
 loader:
   targ_from_chid: '^\d+-\d+-\d+#[sml]Room\d{3}-\d+%\S+\^\d+@(\d+)$'
-  batch_size: 128
+  batch_size: 512
   num_workers: 4
   pin_memory: false
 
@@ -97,7 +97,7 @@ train:
   lr: 0.001
   num_epochs: 10
   stop_after: 10
-  resume_training: false
+  resume_training: true
   accelerator: cuda
   devices: 1
   num_nodes: 1

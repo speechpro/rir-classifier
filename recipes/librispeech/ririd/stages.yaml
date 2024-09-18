@@ -169,7 +169,6 @@ prepare_valid_data:
       num_per_utt: ${params.chunk.valid_num_per_utt}
       num_chunks: ${params.chunk.valid_num_chunks}
     done_mark: ${logs_root}/06_prepare_data/prepare_valid_data.done
-    force: true
 
 prepare_test_data:
   module: inex.helpers/stage
@@ -204,7 +203,7 @@ train_model:
   module: inex.helpers/stage
   options:
     config_path: local/train_model.yaml
-    final_path: ${logs_root}/07_train_model/train_model.yaml
+    final_path: ${params.paths.train_dir}/final_config.yaml
     title: 'Training model'
     override:
       targ_from_chid: ${params.loader.targ_from_chid}
@@ -227,4 +226,3 @@ train_model:
       log_aver_num: ${params.train.log_aver_num}
       train_dir: ${params.paths.train_dir}
     done_mark: ${logs_root}/07_train_model/train_model.done
-    force: true
