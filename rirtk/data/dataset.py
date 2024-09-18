@@ -49,7 +49,7 @@ class BatchSet(Dataset):
             inputs.append(load_mat(path, fd_dict=fd_dict))
         for stream in fd_dict.values():
             stream.close()
-        labels = np.ndarray(labels, dtype=np.int32)
+        labels = np.array(labels, dtype=np.int32)
         inputs = np.stack(inputs)
         labels = torch.tensor(labels, dtype=torch.int64)
         inputs = torch.tensor(inputs, dtype=torch.float32)
